@@ -95,3 +95,71 @@ def find_the_closest_line(point, lines):
     # line of interest: 
     line = lines[min_index]
     return line
+
+
+
+
+def get_id_carretera(Codigo,df_carreteras):
+    """
+    descrp:
+    devuelve el id de la carretera según de los datos del Visor Multiparametro de la carretera basando en su codigo
+    
+    input: 
+    Codigo -  codigo de la carretera pe AP-41,debe estar dentro de la carretera!
+    df_carreteras - tabla  A-Carretera  de Visor Multiparametro
+    
+    output: 
+    sentido - 1 creciente;  2 decreciente formato int
+    """
+    df_carretera = df_carreteras[df_carreteras['Codigo'] == Codigo ]
+    if df_carretera.empty:
+        idCarretera = None
+    else:
+        idCarretera = df_carretera.iloc[0]['IdCarretera']
+    
+    return idCarretera
+
+def check_sentido(PK_INI,PK_FIN):
+    """
+    descrp:
+    devuelve el sentido de la carretera basando en sus pk ( pk inicial y pk final)
+    
+    input: 
+    PK_INI -  pk inicial del tramo de la carretera formato int pe. 15100 (PK15+100)
+    PK_FIN - pk final del tramo de la carretera formato int pe. 15100 (PK15+100)
+    
+    output:
+    sentido - 1 creciente;  2 decreciente formato int
+    """
+    if PK_INI-PK_FIN < 0:
+        sentido =  1
+    elif PK_INI-PK_FIN > 0:
+        sentido = 2
+        
+    return sentido
+        
+
+def get_id_tramo(IdCarretera,sentido,df_tramos):
+    """
+    input: 
+    idCarretera -  id correspondiente al id de la carretera la tabla A-Carretera
+    sentido - 1 creciente;  2 decreciente
+    
+    output:
+    idTramo - id del tramo correspondiente al tramo en deflexiones y las zonas homogeneas
+    """
+    df_tramos_de_carretera = df_tramos[df_tramos["IdCarretera"] == IdCarretera]
+    df_tramos_de_carretera["PK_INI"] = df_tramos_de_carretera.apply(lambda row: row["PKIHito"]*1000 + row["PKIDist"],axis=1)
+    df_tramos_de_carretera["PK_FIN"] = df_tramos_de_carretera.apply(lambda row: row["PKFHito"]*1000 + row["PKFDist"],axis=1)
+    
+    df_tramos_de_carretera["Sentido"] =df_tramos_de_carretera.apply(lambda row: check_sentido(row["PK_INI"],row["PK_FIN"]),axis=1)
+    
+    df_tramo= df_tramos_de_carretera[df_tramos_de_carretera['Sentido'] == sentido ]
+    if df_tramo.empty:
+        IdTramo = None
+    else:
+        IdTramo = df_tramo.iloc[0]['IdTramo']
+        
+    
+    return IdTramo
+
