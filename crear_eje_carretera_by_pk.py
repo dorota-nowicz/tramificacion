@@ -1,3 +1,8 @@
+""" IMPORTAR MODULOS """
+import geopandas as gpd
+import time
+from tramificacion import *
+
 
 """ INPUT """
 nombre_carretera ="AP-41"
@@ -5,24 +10,24 @@ tipo_tramD = "Troncal"
 
 path_carretera =  r"C:\PROYECTOS\ESP_P_SEITT FIRMES AP-41 A-40 TO-22\GIS\CAPAS\SHP\ejeCarretera\RT_TOLEDO\RT_VIARIA\rt_tramo_vial.shp"
 path_pk=  r"C:\PROYECTOS\ESP_P_SEITT FIRMES AP-41 A-40 TO-22\GIS\CAPAS\SHP\ejeCarretera\RT_TOLEDO\RT_VIARIA\rt_portalpk_p.shp"
-sentidopk = 2
+sentidopk = 1
 
 pk_hit_ini_input = 11
 pk_hit_fin_intput =47
 
 buffer = 0.0001 # m
-epsg_input = 'EPSG:4326'
-epsg_output = 'EPSG:25830'
+epsg_input = 'EPSG:4326' # en grados
+epsg_output = 'EPSG:25830' # ETRS_1989_UTM_Zone_30N
 
 
-""" IMPORTAR MODULOS """
-import geopandas as gpd
-from tramificacion import *
+
 
 # PASO 1. Cargar datos del shp al df
+start_time = time.time()
 df_carreteras = gpd.read_file(path_carretera)
 df_pk = gpd.read_file(path_pk)
 df_carretera = filtr_road(df_carreteras,nombre_carretera,tipo_tramD)
+print("Tiempo de cargar las capas--- %s seconds ----" % (time.time() - start_time))
 
 
 
