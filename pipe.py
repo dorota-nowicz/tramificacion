@@ -7,6 +7,7 @@ import generar_shp_with_colors
 import shp_2_cad
 
 """ INPUT 
+
 NOMBRE_CARRETERA: nombre de la carretera el cual debe aparecer dentro de la columna "nombre" de la capa  definida en la variable PATH_CARRETERA
 TIPO_TRAMD: tipo de tramo para sacar la eje de la carretera. Debe coincidir con un tipo enumerado dentro de la columna tipo_tramD" de la capa definida en la variable PATH_CARRETERA
 PATH_CARRETERA: la ruta hacia shp con la carreteras ( polilineas) la cual se puede descargar desde la siguiente pagina web http://centrodedescargas.cnig.es/CentroDescargas/buscar.do?filtro.codFamilia=REDTR#
@@ -26,6 +27,7 @@ NOMBRE_BLOCK_PK100: nombre del bloque para el PK100 si no existe en el archivo d
 NOMBRE_BLOCK_PK20: nombre del bloque para el PK20 si no existe en el archivo definido en PATH_DXF se generará uno por defecto
 NOMBRE_CAPA_EJE: nombre de la capa para los bloques NOMBRE_BLOCK_PK100 y NOMBRE_BLOCK_PK20 si no existe en el archivo definido en PATH_DXF se generará uno por defecto
 NUEVO_ARCHIVO: si queremos dibujar la eje con los PK en un nuevo archivo "1", si ya tenemos un archivo "0". Si seleccionamos "0", es muy importante definir la variable PATH_DXF
+
 """
 
 
@@ -40,24 +42,24 @@ os.environ["BUFFER"] = "0.0001"
 os.environ["EPSG_INPUT"] = "EPSG:4326"
 os.environ["EPSG_OUTPUT"] = "EPSG:25830"
 os.environ["LONG_TRAMO"] = "5"
-
 os.environ["PATH_TRAMO_XLSX"] = r"C:\PROYECTOS\ESP_P_SEITT FIRMES AP-41 A-40 TO-22\DATOS_CARRETERA\xlsx_MadridToledo\A-tramo.xlsx"
 os.environ["PATH_CARRETERA_XLSX"] = r"C:\PROYECTOS\ESP_P_SEITT FIRMES AP-41 A-40 TO-22\DATOS_CARRETERA\xlsx_MadridToledo\A-Carretera.xlsx"
 os.environ["PATH_ZONA_HOMOGENEA_XLSX"] =  r"C:\PROYECTOS\ESP_P_SEITT FIRMES AP-41 A-40 TO-22\DATOS_CARRETERA\xlsx_MadridToledo\ZONA_HOMOGENEA_UNE_41250_4.xlsx" 
-os.environ["PATH_DXF"] = "" 
+os.environ["PATH_DXF"] = r"C:\PROYECTOS\ESP_P_SEITT FIRMES AP-41 A-40 TO-22\PYTHON\test.dxf" 
 os.environ["NOMBRE_BLOCK_PK100"] = "pk100" 
 os.environ["NOMBRE_BLOCK_PK20"] = "pk20" 
 os.environ["NOMBRE_CAPA_EJE"] = "eje" 
+os.environ["NUEVO_ARCHIVO"] ="0" # 1- creamos nuevo archivo, 0 - usamos archivo definido en PATH_DXF
 
-os.environ["NUEVO_ARCHIVO"] ="1"
 
+# comenta los scripts los cuales no quieres usar
 if __name__ == '__main__':
 
     # 1. crear_eje_carretera_by_pk.py
-    crear_eje_carretera_by_pk.run_script()
+    #crear_eje_carretera_by_pk.run_script()
 
     # 2. generar_shp_with_colors.py
-    generar_shp_with_colors.run_script()
+    #generar_shp_with_colors.run_script()
 
     # 3. shp_2_cad.py
     shp_2_cad.run_script()

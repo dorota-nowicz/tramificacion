@@ -19,7 +19,7 @@ def run_script():
     nombre_carretera =  os.environ["NOMBRE_CARRETERA"]
     block_name_20 = os.environ["NOMBRE_BLOCK_PK20"]
     block_name_100 = os.environ["NOMBRE_BLOCK_PK100"]
-
+    dxf_path = os.environ["PATH_DXF"] 
     path_tramos_shp = nombre_carretera+"_sentido_"+str(int(sentidopk))+"_tramificada_por_dfk.shp"
 
 
@@ -34,6 +34,7 @@ def run_script():
     if NUEVO_ARCHIVO== 1:
         dxf = ezdxf.new('R2010')  # create a new DXF R2010 drawing, official DXF version name: 'AC1024'
     elif NUEVO_ARCHIVO== 0:
+        
         dxf = ezdxf.readfile(dxf_path)
 
 
