@@ -5,6 +5,7 @@ import time
 import os
 
 
+
 def run_script():
     """ INPUT """
     nombre_carretera = os.environ["NOMBRE_CARRETERA"]
@@ -43,6 +44,14 @@ def run_script():
     df_pk_calzada["geometry"] = [ tranform_geom(geom,epsg_input,epsg_output) for geom in df_pk_calzada["geometry"] ]
     df_calzada["geometry"] = [ tranform_geom(geom,epsg_input,epsg_output) for geom in df_calzada["geometry"] ]
     df_carretera["geometry"] =  [ tranform_geom(geom,epsg_input,epsg_output) for geom in df_carretera["geometry"] ]
+
+    ### update exactitud
+    simpledec = re.compile(r"\d*\.\d+")
+    df_pk_carretera["geometry"] = df_pk_carretera["geometry"].apply(lambda x: loads(re.sub(simpledec, mround, x.wkt)))
+    df_pk_calzada["geometry"] = df_pk_calzada["geometry"].apply(lambda x: loads(re.sub(simpledec, mround, x.wkt)))
+    df_calzada["geometry"] = df_calzada["geometry"].apply(lambda x: loads(re.sub(simpledec, mround, x.wkt)))
+    df_carretera["geometry"] = df_carretera["geometry"].apply(lambda x: loads(re.sub(simpledec, mround, x.wkt)))
+
     # join carretera with PK
     df_carretera_and_pk = pd.merge(df_pk_carretera,
             df_calzada, 
@@ -63,7 +72,7 @@ def run_script():
     pk_ini_row =  df_carretera_and_pk[["numero", "geometry_x"]].iloc[0] if pk_ini_row.empty else pk_ini_row.iloc[0]
 
     pk_fin_row =df_carretera_and_pk[df_carretera_and_pk["numero"]==pk_hit_fin_intput][["numero", "geometry_x"]]
-    pk_fin_row = df_carretera_and_pk[["numero", "geometry_x"]].iloc[0] if pk_fin_row.empty else pk_fin_row.iloc[0]
+    pk_fin_row = df_carretera_and_pk[["numero", "geometry_x"]].iloc[-1] if pk_fin_row.empty else pk_fin_row.iloc[0]
 
     PK_INI = pk_ini_row.numero
     PK_FIN = pk_fin_row.numero
@@ -140,7 +149,7 @@ def run_script():
         splitted_segment = split(corrected_segment, MultiPoint(points_segment) )
         #convert_geom  = tranform_geom(splitted_segment,epsg_input,epsg_output)
         if len(splitted_segment)!= len(points_segment)-1:
-            print("Bad things happen")
+            print("Disminuyr el buffer e intenta otra vez")
         df_tramo = generate_df_tramo(pk, splitted_segment)
         gdf_tramo = generate_gdf_tramo(None,splitted_segment,df_tramo)
         pk+=1
