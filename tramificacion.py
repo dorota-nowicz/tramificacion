@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: latin-1 -*-
 import numpy as np
 import geopandas as gpd
 import pandas as pd
