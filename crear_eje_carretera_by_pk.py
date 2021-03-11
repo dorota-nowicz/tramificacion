@@ -18,6 +18,8 @@ def run_script():
     buffer = float(os.environ["BUFFER"]) # m
     epsg_input = os.environ["EPSG_INPUT"] 
     epsg_output = os.environ["EPSG_OUTPUT"]
+    ciudad = os.environ["CIUDAD"]
+    distance_delta = int(os.environ["LONG_TRAMO"])
 
 
     # PASO 1. Cargar datos del shp al df
@@ -103,7 +105,7 @@ def run_script():
 
     """ DIVIDE LINE BY ALL PKS """
     # correct line para poder split line at every PK
-    df_pk_carretera = df_pk[df_pk['id_tramo'].isin(df_carretera.id_tramo)].sort_values(by=["sentidopk","numero"])
+    #df_pk_carretera = df_pk[df_pk['id_tramo'].isin(df_carretera.id_tramo)].sort_values(by=["sentidopk","numero"])
     line_pk1000 = line
     for index, row in df_pk_calzada.iterrows():
         line_pk1000 = correct_road_by_PK(row.geometry,line_pk1000, buffer)
@@ -120,7 +122,7 @@ def run_script():
 
     from shapely.ops import unary_union
     #distance_delta =  5/111000 *1.259 #5/111000 *1.25944584382#  5 m --> 5/111000 degree ????????????????????????
-    distance_delta = 5 # estamos en la projeccion EPSG 25830
+    #distance_delta = 5 # estamos en la projeccion EPSG 25830
 
     collections= []
 
@@ -134,11 +136,8 @@ def run_script():
     for segment in splitted_pk1000:
         collections.append(get_pk_by_line(segment,distance_delta))
 
-    pk = PK_INI
+    pk = PK_INI if sentidopk == 1 else PK_FIN
     frames = []
-
-    #buffer = 0.0001 # m
-
     for (points_segment,segement ) in zip(collections,splitted_pk1000):
         
         # we are goijng to try to split line by all points ( we want to get 194 lines)
@@ -150,9 +149,9 @@ def run_script():
         #convert_geom  = tranform_geom(splitted_segment,epsg_input,epsg_output)
         if len(splitted_segment)!= len(points_segment)-1:
             print("Disminuyr el buffer e intenta otra vez")
-        df_tramo = generate_df_tramo(pk, splitted_segment)
+        df_tramo = generate_df_tramo(pk, splitted_segment,sentidopk)
         gdf_tramo = generate_gdf_tramo(None,splitted_segment,df_tramo)
-        pk+=1
+        pk= pk+1 if sentidopk ==1 else pk-1
         frames.append(gdf_tramo)
         
     gdf_tramos = pd.concat(frames)
@@ -162,7 +161,7 @@ def run_script():
 
     gdf_tramos["id"] = [i+1 for i in range(len(gdf_tramos))]
 
-    gdf_tramos.to_file(nombre_carretera+'_sentido_'+str(int(sentidopk))+'_tramificada_'+str(int(distance_delta))+'m.shp')
+    gdf_tramos.to_file(ciudad+"_"+nombre_carretera+'_sentido_'+str(int(sentidopk))+'_tramificada_'+str(int(distance_delta))+'m.shp')
     return
 
 

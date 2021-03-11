@@ -18,9 +18,10 @@ def run_script():
     distance_delta = int(os.environ["LONG_TRAMO"] )
     nombre_carretera =  os.environ["NOMBRE_CARRETERA"]
     block_name_20 = os.environ["NOMBRE_BLOCK_PK20"]
-    block_name_100 = os.environ["NOMBRE_BLOCK_PK100"]
+    block_name_100 = os.environ["NOMBRE_BLOCK_PK100_1"] if sentidopk==1 else os.environ["NOMBRE_BLOCK_PK100_2"]
     dxf_path = os.environ["PATH_DXF"] 
-    path_tramos_shp = nombre_carretera+"_sentido_"+str(int(sentidopk))+"_tramificada_por_dfk.shp"
+    ciudad = os.environ["CIUDAD"] 
+    path_tramos_shp = ciudad+"_"+nombre_carretera+"_sentido_"+str(int(sentidopk))+"_tramificada_por_dfk.shp"
 
 
     eje_layer = os.environ["NOMBRE_CAPA_EJE"]
@@ -28,14 +29,16 @@ def run_script():
     colors = ["verde","amarillo","rojo","azul"]
     id_colors = [3,2,1,5]
 
-    head, tail = os.path.split(path_tramos_shp)
-    output_name = tail.split(".")[0]
+
 
     if NUEVO_ARCHIVO== 1:
         dxf = ezdxf.new('R2010')  # create a new DXF R2010 drawing, official DXF version name: 'AC1024'
+        head, tail = os.path.split(path_tramos_shp)
+        output_name = tail.split(".")[0]
     elif NUEVO_ARCHIVO== 0:
-        
         dxf = ezdxf.readfile(dxf_path)
+        head, tail = os.path.split(dxf_path)
+        output_name = tail.split(".")[0]
 
 
     msp = dxf.modelspace()
@@ -55,7 +58,7 @@ def run_script():
     """ BLOQUE PK100  """
 
     #definir blocke pk100
-    pk100 = dxf.blocks[block_name_100] if  block_name_100 in dxf.blocks else cad.create_new_block_pk100(dxf,block_name_100)
+    pk100 = dxf.blocks[block_name_100] if  block_name_100 in dxf.blocks else cad.create_new_block_pk100(dxf,block_name_100,sentidopk)
     intervalo100 = 100
 
     # calculate rotation for all PK every 100 m
@@ -65,7 +68,7 @@ def run_script():
     for index, row in df_tramos_shp_100m.iterrows():
 
         blockref = msp.add_blockref(block_name_100, row.pk_geom,dxfattribs={
-            'rotation': row.rotation+180,
+            'rotation': row.rotation if sentidopk ==1 else row.rotation+180,
             'layer': eje_layer
         })
         

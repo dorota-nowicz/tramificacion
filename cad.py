@@ -22,7 +22,7 @@ def prepare_PK_DIST_IN(PK_DIST_IN):
         
     return str(PK_DIST_IN)
 
-def create_new_block_pk100(dxf,block_name):
+def create_new_block_pk100(dxf,block_name,sentidopk):
     """
     Esta funcion crea un blocke en autocad  con una linia y el atributo de texto llamado "PK"
     
@@ -31,8 +31,13 @@ def create_new_block_pk100(dxf,block_name):
     output: pk100 - blocke de cad
     """
     pk100 = dxf.blocks.new(name=block_name)
-    pk100.add_lwpolyline([( -1.5,0), (8,0)])  # the pk100 symbol as 2D line
-    pk100.add_attdef('PK', (8.5, -2.5), dxfattribs={'height': 5, 'color': 5})
+    
+    if sentidopk == 1:
+        pk100.add_lwpolyline([( 8,0), (-1.5,0)])  # the pk100 symbol as 2D line
+        pk100.add_attdef('PK', (10.5, -2.5), dxfattribs={'height': 5, 'color': 5})
+    elif sentidopk ==2:
+        pk100.add_lwpolyline([( -8,0), (1.5,0)])  # the pk100 symbol as 2D line
+        pk100.add_attdef('PK', (-35.5, -2.5), dxfattribs={'height': 5, 'color': 5})
     return  pk100
 
 

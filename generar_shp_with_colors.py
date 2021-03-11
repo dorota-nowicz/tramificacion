@@ -19,8 +19,9 @@ def run_script():
     path_tramos = os.environ["PATH_TRAMO_XLSX"]
     path_carreteras = os.environ["PATH_CARRETERA_XLSX"]
     path_zonas = os.environ["PATH_ZONA_HOMOGENEA_XLSX"]
+    ciudad = os.environ["CIUDAD"]
     
-    path_tramos_shp =  nombre_carretera+'_sentido_'+str(int(sentidopk))+'_tramificada_'+str(int(distance_delta))+'m.shp'
+    path_tramos_shp =  ciudad+"_"+nombre_carretera+'_sentido_'+str(int(sentidopk))+'_tramificada_'+str(int(distance_delta))+'m.shp'
 
 
     # read data to dataframe
@@ -71,7 +72,7 @@ def run_script():
     merged_df = merged_df.rename(columns={"C_Variación": "C_Variacion"})
 
     # guardar el archivo a un nuevo shp
-    merged_df.to_file(nombre_carretera+"_sentido_"+str(int(sentidopk))+"_tramificada_por_dfk.shp")
+    merged_df.to_file(ciudad+"_"+nombre_carretera+"_sentido_"+str(int(sentidopk))+"_tramificada_por_dfk.shp")
     return
 
 if __name__ == "__main__":
